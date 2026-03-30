@@ -128,18 +128,15 @@
       border: 5px solid #667eea;
       transition: transform 4s cubic-bezier(0.23, 1, 0.32, 1);
     }
-    .wheel-segment {
+    .wheel-label {
       position: absolute;
-      width: 50%;
-      height: 50%;
-      transform-origin: 100% 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 600;
       color: white;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+      white-space: nowrap;
+      z-index: 5;
+      pointer-events: none;
     }
     .wheel-center {
       position: absolute;
@@ -293,15 +290,38 @@ Hannah</textarea>
       if (names.length === 0) return;
       
       const anglePerSegment = 360 / names.length;
+      const radius = 150; // half of 300px container
       
+      // Create conic gradient background for the wheel
+      let gradientColors = [];
+      names.forEach((_, index) => {
+        const startAngle = index * anglePerSegment;
+        const endAngle = (index + 1) * anglePerSegment;
+        gradientColors.push(`${getRandomColor(index, names.length)} ${startAngle}deg ${endAngle}deg`);
+      });
+      wheel.style.background = `conic-gradient(${gradientColors.join(', ')})`;
+      
+      // Add text labels
       names.forEach((name, index) => {
-        const segment = document.createElement('div');
-        segment.className = 'wheel-segment';
-        segment.style.transform = `rotate(${index * anglePerSegment}deg)`;
-        segment.style.background = getRandomColor(index, names.length);
-        segment.style.clipPath = `polygon(100% 100%, 100% 0, ${50 + 50 * Math.cos((anglePerSegment - 90) * Math.PI / 180)}% ${50 + 50 * Math.sin((anglePerSegment - 90) * Math.PI / 180)}%)`;
-        segment.textContent = name.length > 8 ? name.substring(0, 8) + '...' : name;
-        wheel.appendChild(segment);
+        const angle = index * anglePerSegment + anglePerSegment / 2;
+        const radian = (angle - 90) * Math.PI / 180;
+        const x = 50 + 35 * Math.cos(radian); // 35% from center
+        const y = 50 + 35 * Math.sin(radian);
+        
+        const label = document.createElement('div');
+        label.className = 'wheel-label';
+        label.style.position = 'absolute';
+        label.style.left = x + '%';
+        label.style.top = y + '%';
+        label.style.transform = 'translate(-50%, -50%)';
+        label.style.fontSize = '0.85rem';
+        label.style.fontWeight = '600';
+        label.style.color = 'white';
+        label.style.textShadow = '1px 1px 2px rgba(0,0,0,0.8)';
+        label.style.whiteSpace = 'nowrap';
+        label.style.zIndex = '5';
+        label.textContent = name.length > 10 ? name.substring(0, 10) + '...' : name;
+        wheel.appendChild(label);
       });
     }
 

@@ -88,6 +88,20 @@
       align-items: center;
       justify-content: center;
     }
+    .empty-message {
+      background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
+      color: #856404;
+      padding: 20px 30px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      border: 2px solid #ffeaa7;
+      box-shadow: 0 4px 15px rgba(255, 234, 167, 0.4);
+      animation: gentlePulse 2s ease-in-out infinite;
+    }
+    @keyframes gentlePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
     .result {
       font-size: 3rem;
       font-weight: bold;
@@ -211,7 +225,14 @@
     <p class="subtitle">Fair and fun way to select students</p>
     
     <textarea id="nameInput" placeholder="Enter names here, one per line:
-&#10;Alice&#10;Bob&#10;Charlie&#10;Diana&#10;Evan"></textarea>
+&#10;Alice&#10;Bob&#10;Charlie&#10;Diana&#10;Evan">Alice
+Bob
+Charlie
+Diana
+Evan
+Fiona
+George
+Hannah</textarea>
     
     <div class="equity-mode">
       <input type="checkbox" id="equityMode" checked>
@@ -288,7 +309,9 @@
       parseNames();
       
       if (names.length === 0) {
-        alert('Please enter some names first!');
+        const container = document.getElementById('resultContainer');
+        container.style.display = 'flex';
+        container.innerHTML = '<div class="empty-message">👋 Please add some student names above, then click Spin!</div>';
         return;
       }
       
@@ -423,6 +446,16 @@
         }, i * 50);
       }
     }
+
+    // Initialize wheel on page load with demo names
+    window.addEventListener('DOMContentLoaded', function() {
+      parseNames();
+      if (names.length > 0) {
+        document.getElementById('wheelContainer').style.display = 'block';
+        document.getElementById('resultContainer').style.display = 'none';
+        createWheel();
+      }
+    });
   </script>
 </body>
 </html>
